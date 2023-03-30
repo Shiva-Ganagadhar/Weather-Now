@@ -4,33 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/img_2"
     tools:context=".LocationpageActivity">
 
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/locationlayout"
+    <EditText
+        android:id="@+id/Entercityname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        app:boxStrokeColor="#018786"
-        app:hintTextColor="#018786"
+        android:hint="Enter City Name"
+        android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/Entercityname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter City Name"
-        android:inputType="textEmailAddress"
-        android:textSize="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <RadioButton
         android:id="@+id/currentlocation"
@@ -38,20 +27,18 @@
         android:layout_height="wrap_content"
         android:text="Current Location"
         android:textSize="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/locationlayout"
+        app:layout_constraintBottom_toTopOf="@+id/Entercityname"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Entercityname" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/or"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="_______________or_________________"
+        android:text=""
         android:textSize="25dp"
         app:layout_constraintBottom_toTopOf="@+id/currentlocation"
-        app:layout_constraintTop_toBottomOf="@+id/Entercityname"
         tools:layout_editor_absoluteX="32dp" />
 
     <TextView
@@ -59,6 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Your Location"
+        android:textColor="@color/black"
         android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

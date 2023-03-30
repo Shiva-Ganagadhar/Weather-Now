@@ -1,6 +1,8 @@
 package com.example.weathernow.viewmodel
 
 import android.util.Log
+import android.util.Log.e
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.weathernow.WeatherAPIService
@@ -10,6 +12,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 private const val TAG = "MainViewModel"
 
@@ -30,7 +35,7 @@ class MainViewModel : ViewModel() {
      fun getDataFromAPI(cityName: String) {
 
         weather_loading.value = true
-        disposable.add(
+        /*disposable.add(
             weatherApiService.getDataService(cityName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -50,8 +55,23 @@ class MainViewModel : ViewModel() {
                     }
 
                 })
-        )
+        )*/
+         weatherApiService.getDataService(cityName).enqueue(object : Callback<WeatherModel?> {
+             override fun onResponse(call: Call<WeatherModel?>, response: Response<WeatherModel?>) {
+                 if(response.isSuccessful){
+                     weather_data.value = response.body()
+                 }
+             }
 
+             override fun onFailure(call: Call<WeatherModel?>, t: Throwable) {
+                 e("api",t.message.toString())
+             }
+         })
+
+    }
+
+    fun observe():LiveData<WeatherModel>{
+        return weather_data
     }
 
 }

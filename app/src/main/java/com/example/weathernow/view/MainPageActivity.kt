@@ -2,6 +2,7 @@ package com.example.weathernow.view
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log.e
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.weathernow.viewmodel.MainViewModel
@@ -9,6 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.weathernow.LocationpageActivity
 import com.example.weathernow.databinding.ActivityMainPageBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainPageActivity : AppCompatActivity(){
@@ -24,11 +27,13 @@ class MainPageActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         binding = ActivityMainPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val cityname = intent.getStringExtra("cityName")
 
         GET = getSharedPreferences(packageName, MODE_PRIVATE)
         SET = GET.edit()
 
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         var cName = GET.getString("cityName","Dhanbad")
 //        if (cName != null) {
@@ -52,6 +57,11 @@ class MainPageActivity : AppCompatActivity(){
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
+        cityname?.apply {  viewModel.getDataFromAPI(this)
+                            binding.cityName.text = this
+                            e("city",this)}
+        viewModel.observe().observe(this){ e("data","$it")}
+
 
 
 
@@ -64,17 +74,20 @@ class MainPageActivity : AppCompatActivity(){
            data?.let{
                binding.mainContainer.visibility = View.VISIBLE
                binding.loader.visibility = View.GONE
-               binding.temp.text = data.main.temp.toString() + "⁰C"
-               binding.address.text = data.name.toString()
-               binding.sunrise.text = data.sys.sunrise.toString()
-               binding.sunset.text = data.sys.sunset.toString()
-               binding.wind.text = data.wind.toString()
-               binding.pressure.text= data.main.pressure.toString()
-               binding.humidity.text = data.main.humidity.toString()
-
-               binding.tempMax.text = data.main.tempMax.toString()
-               binding.tempMin.text = data.main.tempMin.toString()
-               binding.feelLike.text = data.main.feelsLike.toString()
+               val temp  = ((data.main.temp - 273.5)*100).toInt()/100
+               binding.temp.text = temp.toString() + "⁰C"
+               binding.cityName.text = data.name
+               binding.sunrise.text = time(data.sys.sunrise.toLong()) + "AM"
+               binding.sunset.text = time(data.sys.sunset.toLong()) + "PM"
+               binding.wind.text = data.wind.speed.toString() + "m/s"
+               binding.pressure.text= data.main.pressure.toString() + "hPa"
+               binding.humidity.text = data.main.humidity.toString() + "%"
+               val tempMax  = ((data.main.tempMax - 273.5)*100).toInt()/100
+               binding.tempMax.text = "Max Temp:" +tempMax.toString() + "⁰C"
+               val tempMin  = ((data.main.tempMin - 273.5)*100).toInt()/100
+               binding.tempMin.text =  "Min Temp:" +tempMin.toString() + "⁰C"
+               val feelsLike  = ((data.main.feelsLike - 273.5)*100).toInt()/100
+               binding.feelLike.text = feelsLike.toString() + "⁰C"
 
 
            }
@@ -108,6 +121,12 @@ class MainPageActivity : AppCompatActivity(){
                 }
             }
         })
+    }
+
+    private fun time(t : Long):String{
+        val date = Date(t)
+        val f = SimpleDateFormat("HH :mm")
+        return  f.format(date)
     }
 
 

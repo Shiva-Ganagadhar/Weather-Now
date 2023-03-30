@@ -1,6 +1,7 @@
 package com.example.weathernow
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
@@ -9,7 +10,9 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.util.Log.e
 import android.widget.Button
+import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
@@ -29,21 +32,28 @@ class LocationpageActivity : AppCompatActivity() {
     lateinit var currentlocation: RadioButton
     lateinit var textView: TextView
     lateinit var btnOK: Button
+    lateinit var CityName:String
+    lateinit var editText : EditText
     private lateinit var binding: ActivityLocationPageBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityLocationPageBinding.inflate(layoutInflater)
         setContentView(R.layout.activity_location_page)
         currentlocation = findViewById(R.id.currentlocation)
         btnOK = findViewById(R.id.btnOK)
         textView = findViewById(R.id.Locationtxt)
+        editText = findViewById(R.id.Entercityname)
+
         btnOK.setOnClickListener {
-            val cityName = cityName.toString()
+            val cityName: String = editText.text.toString()
+            CityName = cityName
+            e("cityname",editText.text.toString())
 
             if (cityName !=null){
-                startActivity(Intent(this, MainPageActivity::class.java)
-                    .putExtra("cityName",cityName)
-                )
+                val intent = Intent(this,MainPageActivity::class.java)
+                intent.putExtra("cityName",cityName)
+                startActivity(intent)
 
             }else{
                 Toast.makeText( this ,"Required CityName" , Toast.LENGTH_SHORT).show()
@@ -90,7 +100,7 @@ fun setcityname(cityName: String ){
                     if (location == null) {
                         NewLocationData()
                     } else {
-                        Log.d("Debug:", "Your Location:" + location.longitude)
+                        Log.e( "Your Location:" ,location.longitude.toString())
                         textView.text =
                             "You Current Location is : Long: " + location.longitude + " , Lat: " + location.latitude + "\n" + getCityName(
                                 location.latitude,
@@ -139,6 +149,7 @@ fun setcityname(cityName: String ){
 
 
     private val locationCallback = object : LocationCallback() {
+        @SuppressLint("SetTextI18n")
         override fun onLocationResult(locationResult: LocationResult) {
             var lastLocation: Location? = locationResult.lastLocation
             Log.d("Debug:", "your last last location: " + lastLocation?.longitude.toString())
@@ -208,7 +219,7 @@ fun setcityname(cityName: String ){
         }
     }
 
-    var cityName: String = ""
+
     var countryName = ""
 
 
@@ -220,13 +231,13 @@ fun setcityname(cityName: String ){
 
 
         if (Adress != null) {
-            cityName = Adress.get(0).locality
+            CityName = Adress.get(0).locality
         }
         if (Adress != null) {
             countryName = Adress.get(0).countryName
         }
-        Log.d("Debug:", "Your City: " + cityName + " ; your Country " + countryName)
-        return cityName
+        Log.d("Debug:", "Your City: " + CityName + " ; your Country " + countryName)
+        return CityName
     }
 
 }
